@@ -5,8 +5,11 @@ import NewItem from "./new-item";
 import ItemList from "./item-list";
 import itemsData from "./items.json";
 import MealIdeas from "./meal-ideas";
+import { useUserAuth } from "../_utils/auth-context";
+import Link from "next/link";
 
 export default function Page() {
+  const { user } = useUserAuth();
   const [items, setItems] = useState(itemsData);
   const [selectedItemName, setSelectedItemName] = useState("");
 
@@ -24,6 +27,23 @@ export default function Page() {
       );
     setSelectedItemName(cleanedItemName);
   };
+
+  if (!user) {
+    return (
+      <main className="flex min-h-screen w-full items-center justify-center bg-gray-800">
+        <div>
+          <h1 className="text-3xl text-white font-bold mb-4">Access Denied</h1>
+          <p className="text-white mb-4">
+            Please{" "}
+            <Link href="/week-9" className="text-blue-400 hover:underline">
+              log in
+            </Link>{" "}
+            to view the shopping list.
+          </p>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main className="bg-slate-950 p-2 m-2">
