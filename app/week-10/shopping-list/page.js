@@ -1,20 +1,39 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import NewItem from "./new-item";
 import ItemList from "./item-list";
-import itemsData from "./items.json";
 import MealIdeas from "./meal-ideas";
 import { useUserAuth } from "../_utils/auth-context";
 import Link from "next/link";
+import { getItems, addItem } from "../_services/shopping-list-service";
 
 export default function Page() {
   const { user } = useUserAuth();
-  const [items, setItems] = useState(itemsData);
+  const [items, setItems] = useState([]);
   const [selectedItemName, setSelectedItemName] = useState("");
 
-  const handleAddItem = (newItem) => {
-    setItems((prevItems) => [...prevItems, newItem]);
+  async function loadItems() {
+    if (user) {
+      const userItems = await getItems(user.uid);
+      setItems(userItems);
+    }
+  }
+
+  useEffect(() => {
+    loadItems();
+  }, [user]);
+
+  const handleAddItem = async (newItem) => {
+    if (user) {
+      try {
+        const newItemId = await addItem(user.uid, newItem);
+        newItem.id = newItemId;
+        setItems((prevItems) => [...prevItems, newItem]);
+      } catch (error) {
+        console.error("Error adding item to Firestore:", error);
+      }
+    }
   };
 
   const handleItemSelect = (itemName) => {
@@ -35,7 +54,7 @@ export default function Page() {
           <h1 className="text-3xl text-white font-bold mb-4">Access Denied</h1>
           <p className="text-white mb-4">
             Please{" "}
-            <Link href="/week-9" className="text-blue-400 hover:underline">
+            <Link href="/week-10" className="text-blue-400 hover:underline">
               log in
             </Link>{" "}
             to view the shopping list.

@@ -27,7 +27,7 @@ export default function Page() {
             </p>
             <div className="flex flex-col space-y-2">
               <Link
-                href="/week-9/shopping-list"
+                href="/week-10/shopping-list" // Corrected Link
                 className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded text-center"
               >
                 Go to Shopping List
